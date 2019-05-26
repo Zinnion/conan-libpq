@@ -8,7 +8,7 @@ int main() {
     const int version = PQlibVersion();
     printf("PQlibVersion: %d\n", version);
 
-    conn = PQconnectdb("dbname = postgres");
+    conn = PQconnectdb("dbname=zinnion user=zinnion password=xxxx host=127.0.0.1 port=26257 requiressl=1 sslmode=verify-full");
     PQstatus(conn);
     
     PQfinish(conn);
