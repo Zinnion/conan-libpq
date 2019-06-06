@@ -26,6 +26,7 @@ class LibpqConan(ConanFile):
     _source_subfolder = "source_subfolder"
     _build_subfolder = None
     _autotools = None
+    generators = ["cmake_find_package","cmake"]
 
     def config_options(self):
         if self.settings.os == 'Windows':
@@ -75,20 +76,21 @@ class LibpqConan(ConanFile):
             autotools.install()
         with tools.chdir(os.path.join(self._source_subfolder, "src", "interfaces", "libpq")):
             autotools.install()
-        self.copy(pattern="*.h", dst="include", src=os.path.join(self._build_subfolder, "include"))
-        self.copy(pattern="postgres_ext.h", dst="include", src=os.path.join(self._source_subfolder, "src", "include"))
-        self.copy(pattern="pg_config_ext.h", dst="include", src=os.path.join(self._source_subfolder, "src", "include"))
+        self.copy(pattern="*.h", dst="include", src=os.path.join(self._build_subfolder, "include"),keep_path=False)
+        self.copy(pattern="postgres_ext.h", dst="include", src=os.path.join(self._source_subfolder, "src", "include"),keep_path=False)
+        self.copy(pattern="pg_config_ext.h", dst="include", src=os.path.join(self._source_subfolder, "src", "include"),keep_path=False)
         if self.settings.os == "Linux":
             pattern = "*.so*" if self.options.shared else "*.a"
         elif self.settings.os == "Macos":
             pattern = "*.dylib" if self.options.shared else "*.a"
         elif self.settings.os == "Windows":
             pattern = "*.a"
-            self.copy(pattern="*.dll", dst="bin", src=os.path.join(self._build_subfolder, "bin"))
-        self.copy(pattern=pattern, dst="lib", src=os.path.join(self._build_subfolder, "lib"))
+            self.copy(pattern="*.dll", dst="bin", src=os.path.join(self._build_subfolder, "bin"),keep_path=False)
+        self.copy(pattern=pattern, dst="lib", src=os.path.join(self._build_subfolder, "lib"),keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = tools.collect_libs(self)
+        #self.cpp_info.libs = tools.collect_libs(self)
+        self.cpp_info.libs = ["pq"]
         if self.settings.os == "Linux":
             self.cpp_info.libs.append("pthread")
         elif self.settings.os == "Windows":
